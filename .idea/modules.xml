@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/UnityConnectWifi.iml" filepath="$PROJECT_DIR$/UnityConnectWifi.iml" group="UnityConnectWifi" />
+      <module fileurl="file://$PROJECT_DIR$/connectlibrary/connectlibrary.iml" filepath="$PROJECT_DIR$/connectlibrary/connectlibrary.iml" group="UnityConnectWifi/connectlibrary" />
+      <module fileurl="file://$PROJECT_DIR$/launcher/launcher.iml" filepath="$PROJECT_DIR$/launcher/launcher.iml" group="UnityConnectWifi/launcher" />
+      <module fileurl="file://$PROJECT_DIR$/unityLibrary/unityLibrary.iml" filepath="$PROJECT_DIR$/unityLibrary/unityLibrary.iml" group="UnityConnectWifi/unityLibrary" />
+    </modules>
+  </component>
+</project>
