@@ -23,11 +23,6 @@ public class UDP implements Runnable {
     private static DatagramSocket ds = null;
     private Context context;
 
-    public static void Init()
-    {
-        Log.d(TAG, "Init");
-    }
-
     /**切換伺服器監聽狀態*/
     public void changeServerStatus(boolean isOpen) {
         this.isOpen = isOpen;
@@ -47,7 +42,6 @@ public class UDP implements Runnable {
         this.context = context;
         this.ServerIp = ServerIp;
         this.isOpen = true;
-
     }
 
     /**發送訊息*/
