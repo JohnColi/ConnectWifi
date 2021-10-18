@@ -15,8 +15,7 @@ import java.util.concurrent.Executors;
 import static com.li.connectlibrary.CommendFun.getLocalIP;
 
 public class UDPActivity {
-    public static final String TAG = "Connect.UDPActivity";
-
+    public static final String TAG = UDP.TAG;
     static ExecutorService exec = Executors.newCachedThreadPool();
     static UDP udpServer;
 
@@ -41,15 +40,16 @@ public class UDPActivity {
         udpServer.SetCallBack(udp_callBack);
     }
 
+    //region commend
     public static String GetLocal_IP() {
         String localIP = CommendFun.getLocalIP(UnityPlayer.currentActivity.getApplicationContext());
         Log.d(TAG, "localIP : " + localIP);
         return localIP;
     }
 
-    public static  void SetIP(String ip)
+    public static  void SetRemoteIP(String ip)
     {
-        Log.d(TAG, "SetIP : " + ip);
+        Log.d(TAG, "SetRemoteIP : " + ip);
         mRemoteIP = ip;
     }
 
@@ -65,6 +65,7 @@ public class UDPActivity {
         Log.d(TAG, "SetUnityConnectCallBack");
         unityConnectCallBack = callBack;
     }
+    //endregion
 
     //設置監UDP功能
     private static void SetReceiveSwitch() {
