@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.li.connectlibrary.UDP_CallBack;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -17,11 +19,12 @@ public class UDP implements Runnable {
     public static final String RECEIVE_STRING = "ReceiveString";
     public static final String RECEIVE_BYTES = "ReceiveBytes";
 
-    private int port = 8888;
+    private int port;
     private String ServerIp;
     private boolean isOpen;
     private static DatagramSocket ds = null;
     private Context context;
+    private UDP_CallBack udp_callBack;
 
     /**切換伺服器監聽狀態*/
     public void changeServerStatus(boolean isOpen) {
@@ -44,6 +47,11 @@ public class UDP implements Runnable {
         this.isOpen = true;
     }
 
+    public void SetCallBack(UDP_CallBack callback)
+    {
+        udp_callBack = callback;
+    }
+
     /**發送訊息*/
     public void send(String string, String remoteIp, int remotePort) throws IOException {
         Log.d(TAG, "客户端IP：" + remoteIp + ":" + remotePort);
@@ -55,7 +63,7 @@ public class UDP implements Runnable {
 
     @Override
     public void run() {
-        /**在本機上開啟Server監聽*/
+        //在本機上開啟Server監聽
         InetSocketAddress inetSocketAddress = new InetSocketAddress(ServerIp, port);
         try {
             ds = new DatagramSocket(inetSocketAddress);
@@ -75,13 +83,19 @@ public class UDP implements Runnable {
                 ds.receive(dpRcv);
                 String string = new String(dpRcv.getData(), dpRcv.getOffset(), dpRcv.getLength());
                 Log.d(TAG, "UDP-Server收到資料： " + string);
+                if(udp_callBack ==null)
+                    Log.e(TAG, "udp_callBack is null");
+                else
+                    udp_callBack.OnGetMsg(string);
 
                 /**以Intent的方式建立廣播，將得到的值傳至主要Activity*/
+                /*
                 Intent intent = new Intent();
                 intent.setAction(RECEIVE_ACTION);
                 intent.putExtra(RECEIVE_STRING,string);
                 intent.putExtra(RECEIVE_BYTES, dpRcv.getData());
                 context.sendBroadcast(intent);
+                */
 
             } catch (IOException e) {
                 e.printStackTrace();

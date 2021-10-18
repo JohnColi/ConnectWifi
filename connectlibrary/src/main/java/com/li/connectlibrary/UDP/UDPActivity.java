@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import com.li.connectlibrary.CommendFun;
+import com.li.connectlibrary.UDP_CallBack;
+import com.li.connectlibrary.UnityConnectCallBack;
 import com.unity3d.player.UnityPlayer;
 
 import java.io.IOException;
@@ -20,11 +22,23 @@ public class UDPActivity {
 
     private static String mRemoteIP;
     private static int mPort;
+    private static UDP_CallBack udp_callBack;
+    private static UnityConnectCallBack unityConnectCallBack;
 
     public static void Init()
     {
         Log.d(TAG, "Init");
         SetReceiveSwitch();
+
+        udp_callBack = new UDP_CallBack() {
+            @Override
+            public void OnGetMsg(String msg) {
+                Object o = msg;
+                unityConnectCallBack.OnGetData(o);
+            }
+        };
+
+        udpServer.SetCallBack(udp_callBack);
     }
 
     public static String GetLocal_IP() {
@@ -44,6 +58,12 @@ public class UDPActivity {
         Log.d(TAG, "SetPort : " + port);
         if(!"0".equals(port))
             mPort = port;
+    }
+
+    public static void SetUnityConnectCallBack(UnityConnectCallBack callBack)
+    {
+        Log.d(TAG, "SetUnityConnectCallBack");
+        unityConnectCallBack = callBack;
     }
 
     //設置監UDP功能
