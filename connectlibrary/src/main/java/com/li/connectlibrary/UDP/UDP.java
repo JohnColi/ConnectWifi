@@ -1,10 +1,7 @@
 package com.li.connectlibrary.UDP;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
-
-import com.li.connectlibrary.UDP_CallBack;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

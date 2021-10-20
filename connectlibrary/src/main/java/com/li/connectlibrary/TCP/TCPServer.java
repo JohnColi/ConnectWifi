@@ -19,6 +19,8 @@ class TCPServer implements Runnable {
     private int port;
     private boolean isOpen;
     private Context context;
+    private TCP_CallBack tcp_callBack;
+
     public ArrayList<ServerSocketThread> SST = new ArrayList<>();
     /**建立建構子*/
     public TCPServer(int port,Context context){
@@ -26,6 +28,11 @@ class TCPServer implements Runnable {
         isOpen = true;
         this.context = context;
     }
+
+    public void SetCallBack(TCP_CallBack callBack){
+        tcp_callBack = callBack;
+    }
+
     //取得開啟狀態
     public boolean getStatus(){
         return isOpen;
@@ -72,6 +79,7 @@ class TCPServer implements Runnable {
             e.printStackTrace();
         }
     }
+
     /**監聽裝置連入與收發狀態之執行緒*/
     public class ServerSocketThread extends Thread{
         private Socket socket;
@@ -113,13 +121,12 @@ class TCPServer implements Runnable {
                     if ((rcvLen = is.read(buff)) != -1 ){
                         String string = new String(buff, 0, rcvLen);
                         Log.d(TAG, "收到訊息: " + string);
-                        /**收到訊息後，以廣播的方式回傳到Activity*/
-                        Intent intent = new Intent();
-                        intent.setAction(RECEIVE_ACTION);
-                        intent.putExtra(RECEIVE_STRING,string);
-                        intent.putExtra(RECEIVE_BYTES, buff);
-                        context.sendBroadcast(intent);
 
+                        if(!tcp_callBack.equals(null))
+                        {
+                            Object o = string;
+                            tcp_callBack.OnGetData(o);
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

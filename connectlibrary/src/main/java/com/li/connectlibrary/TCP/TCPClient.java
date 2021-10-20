@@ -20,20 +20,29 @@ class TCPClient implements Runnable {
     private boolean isRun = true;
     private Socket socket;
     private Context context;
+    private TCP_CallBack tcp_callBack;
 
     public TCPClient(String ip , int port,Context context){
         this.serverIP = ip;
         this.serverPort = port;
         this.context = context;
     }
+
+    //取得裝置是否正在連線
     public boolean getStatus(){
         return isRun;
     }
 
+    //關閉連線
     public void closeClient(){
         isRun = false;
     }
 
+    public void SetCallBack(TCP_CallBack callBack){
+        tcp_callBack = callBack;
+    }
+
+    //發送byteArray類型的資訊
     public void send(byte[] msg){
         try {
             OutputStream outputStream = socket.getOutputStream();
@@ -44,6 +53,7 @@ class TCPClient implements Runnable {
         }
     }
 
+    //發送String類型的資訊
     public void send(String msg){
         pw.print(msg);
         pw.flush();
@@ -68,10 +78,11 @@ class TCPClient implements Runnable {
                 String rcvMsg = new String(buff, 0, rcvLen, "utf-8");
                 Log.d(TAG, "收到訊息: "+ rcvMsg);
 
-                Intent intent =new Intent();
-                intent.setAction(TCPServer.RECEIVE_ACTION);
-                intent.putExtra(TCPServer.RECEIVE_STRING, rcvMsg);
-                context.sendBroadcast(intent);
+                if(!tcp_callBack.equals(null))
+                {
+                    Object o = rcvMsg;
+                    tcp_callBack.OnGetData(o);
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
