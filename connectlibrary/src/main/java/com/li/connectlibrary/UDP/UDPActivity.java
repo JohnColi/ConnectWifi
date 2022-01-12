@@ -31,7 +31,14 @@ public class UDPActivity {
         udp_callBack = new UDP_CallBack() {
             @Override
             public void OnGetMsg(String msg) {
-                Object o = msg;
+                Log.d(TAG,"OnGetMsg: "+ msg);
+                unityConnectCallBack.OnGetMsg(msg);
+            }
+
+            @Override
+            public void OnGetDatas(byte[] datas) {
+                Log.d(TAG,"OnGetDatas, data length: "+ datas.length);
+                Object o = datas;
                 unityConnectCallBack.OnGetData(o);
             }
         };
@@ -63,6 +70,13 @@ public class UDPActivity {
     {
         Log.d(TAG, "SetUnityConnectCallBack");
         unityConnectCallBack = callBack;
+    }
+
+    public static void SetGetDataSize(int size)
+    {
+        Log.d(TAG, "SetGetDataSize = " + size);
+        UDP.dataSize = size;
+        SetReceiveSwitch();
     }
     //endregion
 
@@ -97,9 +111,9 @@ public class UDPActivity {
         /**發送UDP訊息至指定的IP*/
         if (msg.length() == 0) return;
 
-        //調用UDP.java中的方法，送出資料
+        /**
+        // 調用UDP.java中的方法，送出資料
         //註解的為lambda表達式，原貌在下面
-        /*
             exec.execute(()->{
                 try {
                     udpServer.send(msg, remoteIp, port);
@@ -107,7 +121,7 @@ public class UDPActivity {
                     e.printStackTrace();
                 }
             });
-            */
+        */
 
         exec.execute(new Runnable() {
             @Override
@@ -116,6 +130,31 @@ public class UDPActivity {
                 try
                 {
                     udpServer.send(msg, mRemoteIP, mPort);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public static void SetSendFunction(final byte[] datas)
+    {
+        Log.d(TAG, "SetSendFunction by byte[]");
+        if(datas == null)
+        {
+            Log.e(TAG,"Sending data is null");
+            return;
+        }
+
+        exec.execute(new Runnable() {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    udpServer.send(datas, mRemoteIP, mPort);
                 }
                 catch (IOException e)
                 {

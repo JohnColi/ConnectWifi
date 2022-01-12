@@ -22,6 +22,7 @@ public class UDP implements Runnable {
     private static DatagramSocket ds = null;
     private Context context;
     private UDP_CallBack udp_callBack;
+    public static int dataSize = 1024;
 
     /**切換伺服器監聽狀態*/
     public void changeServerStatus(boolean isOpen) {
@@ -51,12 +52,17 @@ public class UDP implements Runnable {
 
     /**發送訊息*/
     public void send(String string, String remoteIp, int remotePort) throws IOException {
+        send(string.getBytes(),remoteIp,remotePort);
+    }
+
+    public void send(byte[] data, String remoteIp, int remotePort) throws IOException {
         Log.d(TAG, "客户端IP：" + remoteIp + ":" + remotePort);
         InetAddress inetAddress = InetAddress.getByName(remoteIp);
         DatagramSocket datagramSocket = new DatagramSocket();
-        DatagramPacket dpSend = new DatagramPacket(string.getBytes(), string.getBytes().length, inetAddress, remotePort);
+        DatagramPacket dpSend = new DatagramPacket(data, data.length, inetAddress, remotePort);
         datagramSocket.send(dpSend);
     }
+
 
     @Override
     public void run() {
@@ -64,13 +70,13 @@ public class UDP implements Runnable {
         InetSocketAddress inetSocketAddress = new InetSocketAddress(ServerIp, port);
         try {
             ds = new DatagramSocket(inetSocketAddress);
-            Log.e(TAG, "UDP-Server已啟動");
+            Log.d(TAG, "UDP-Server已啟動");
         } catch (SocketException e) {
             Log.e(TAG, "啟動失敗，原因: " + e.getMessage());
             e.printStackTrace();
         }
         //預備一組byteArray來放入回傳得到的值(PS.回傳為格式為byte[]，本範例將值轉為字串了)
-        byte[] msgRcv = new byte[1024];
+        byte[] msgRcv = new byte[dataSize];
         DatagramPacket dpRcv = new DatagramPacket(msgRcv, msgRcv.length);
         //建立while迴圈持續監聽來訪的數值
         while (isOpen) {
@@ -78,12 +84,21 @@ public class UDP implements Runnable {
             try {
                 //執行緒將會在此打住等待有值出現
                 ds.receive(dpRcv);
+                if(udp_callBack ==null)
+                    Log.e(TAG, "udp_callBack is null");
+                else {
+                    if (dpRcv.getData() == null)
+                        Log.e(TAG, "dpRcv.getData() is null");
+                    udp_callBack.OnGetDatas(dpRcv.getData());
+                }
+                /** Data轉字串的方法
                 String string = new String(dpRcv.getData(), dpRcv.getOffset(), dpRcv.getLength());
                 Log.d(TAG, "UDP-Server收到資料： " + string);
                 if(udp_callBack ==null)
                     Log.e(TAG, "udp_callBack is null");
                 else
                     udp_callBack.OnGetMsg(string);
+                */
 
                 /**以Intent的方式建立廣播，將得到的值傳至主要Activity*/
                 /*
