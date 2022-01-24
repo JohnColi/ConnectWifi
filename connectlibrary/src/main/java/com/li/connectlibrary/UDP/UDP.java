@@ -22,7 +22,7 @@ public class UDP implements Runnable {
     private static DatagramSocket ds = null;
     private Context context;
     private UDP_CallBack udp_callBack;
-    public static int dataSize = 1024;
+    public static int dataSize = 1024 * 4;
 
     /**切換伺服器監聽狀態*/
     public void changeServerStatus(boolean isOpen) {
@@ -63,7 +63,6 @@ public class UDP implements Runnable {
         datagramSocket.send(dpSend);
     }
 
-
     @Override
     public void run() {
         //在本機上開啟Server監聽
@@ -89,25 +88,10 @@ public class UDP implements Runnable {
                 else {
                     if (dpRcv.getData() == null)
                         Log.e(TAG, "dpRcv.getData() is null");
+                    else
+                        Log.d(TAG, "UDP-Server收到資料, size:" + dpRcv.getData().length);
                     udp_callBack.OnGetDatas(dpRcv.getData());
                 }
-                /** Data轉字串的方法
-                String string = new String(dpRcv.getData(), dpRcv.getOffset(), dpRcv.getLength());
-                Log.d(TAG, "UDP-Server收到資料： " + string);
-                if(udp_callBack ==null)
-                    Log.e(TAG, "udp_callBack is null");
-                else
-                    udp_callBack.OnGetMsg(string);
-                */
-
-                /**以Intent的方式建立廣播，將得到的值傳至主要Activity*/
-                /*
-                Intent intent = new Intent();
-                intent.setAction(RECEIVE_ACTION);
-                intent.putExtra(RECEIVE_STRING,string);
-                intent.putExtra(RECEIVE_BYTES, dpRcv.getData());
-                context.sendBroadcast(intent);
-                */
 
             } catch (IOException e) {
                 e.printStackTrace();

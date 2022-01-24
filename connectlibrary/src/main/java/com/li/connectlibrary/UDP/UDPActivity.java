@@ -76,7 +76,6 @@ public class UDPActivity {
     {
         Log.d(TAG, "SetGetDataSize = " + size);
         UDP.dataSize = size;
-        SetReceiveSwitch();
     }
     //endregion
 
